@@ -1,12 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"github.com/steelx/go-story-mode/storyNode"
+	"golang.org/x/image/font/basicfont"
 )
 
 var (
+	basicAtlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	storyStart = storyNode.StoryNode{Text: `
 You enter a big cave.
 
@@ -68,6 +72,9 @@ func run() {
 	storyStart.Play(win)
 
 	for !win.Closed() {
+		endTxt := text.New(pixel.V(100, 100), basicAtlas)
+		fmt.Fprintln(endTxt, "THE END.")
+		endTxt.Draw(win, pixel.IM.Scaled(endTxt.Bounds().Center(), 3))
 		win.Update()
 	}
 }

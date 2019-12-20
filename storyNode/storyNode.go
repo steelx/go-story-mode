@@ -78,8 +78,4 @@ func (story *StoryNode) Play(win *pixelgl.Window) {
 	if len(story.choices) != 0 {
 		story.ExecuteCMD(userInput).Play(win)
 	}
-
-	basicTxt := text.New(pixel.V(100, 100), basicAtlas)
-	fmt.Fprintln(basicTxt, "THE END.")
-	basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 3))
 }
