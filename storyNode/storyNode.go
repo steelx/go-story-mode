@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
+	"github.com/steelx/go-story-mode/pictures"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 	"strings"
@@ -31,14 +32,15 @@ func (story *StoryNode) AddChoice(cmd, description string, nextNode *StoryNode) 
 }
 
 func (story StoryNode) Render(win *pixelgl.Window) {
-	basicTxt := text.New(pixel.V(10, 250), basicAtlas)
+	basicTxt := text.New(pixel.V(50, 250), basicAtlas)
 	fmt.Fprintln(basicTxt, story.Text)
 	basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 1))
 
+	descriptionTxt := text.New(pixel.V(10, 50), basicAtlas)
 	if story.choices != nil {
 		for _, c := range story.choices {
-			fmt.Fprintf(basicTxt, "%s : %s \n", c.cmd, c.description)
-			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 1))
+			fmt.Fprintf(descriptionTxt, "%s : %s \n", c.cmd, c.description)
+			descriptionTxt.Draw(win, pixel.IM.Scaled(descriptionTxt.Orig, 1))
 		}
 	}
 }
@@ -56,7 +58,14 @@ func (story *StoryNode) ExecuteCMD(cmd string) *StoryNode {
 }
 
 func (story *StoryNode) Play(win *pixelgl.Window) {
+	pic, err := pictures.LoadPicture("./resources/old_hero.png")
+	if err != nil {
+		panic(err)
+	}
+
+	sprite := pixel.NewSprite(pic, pic.Bounds())
 	win.Clear(colornames.Black)
+	sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 	story.Render(win)
 	var userInput string
 	if win.Pressed(pixelgl.KeyN) {
@@ -81,7 +90,7 @@ func (story *StoryNode) Play(win *pixelgl.Window) {
 
 	basicTxt := text.New(pixel.V(100, 100), basicAtlas)
 	fmt.Fprintln(basicTxt, "THE END.")
-	basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 3))
+	basicTxt.Draw(win, pixel.IM.Scaled(win.Bounds().Center(), 3))
 }
 
 var (

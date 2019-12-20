@@ -7,16 +7,6 @@ import (
 )
 
 func run() {
-	cfg := pixelgl.WindowConfig{
-		Title:  "Pixel Rocks!",
-		Bounds: pixel.R(0, 0, 480, 320),
-		VSync:  true,
-	}
-	win, err := pixelgl.NewWindow(cfg)
-	if err != nil {
-		panic(err)
-	}
-
 	storyStart := storyNode.StoryNode{Text: `
 	You enter a big cave.
 	
@@ -61,6 +51,16 @@ func run() {
 
 	darkRoomLit.AddChoice("N", "Go North", &treasureRoom)
 	darkRoomLit.AddChoice("S", "Go South", &storyStart)
+
+	cfg := pixelgl.WindowConfig{
+		Title:  "Pixel Rocks!",
+		Bounds: pixel.R(0, 0, 480, 320),
+		VSync:  true,
+	}
+	win, err := pixelgl.NewWindow(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	storyStart.Play(win)
 
