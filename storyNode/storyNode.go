@@ -15,34 +15,19 @@ var (
 )
 
 type Choice struct {
-	cmd string
+	cmd         string
 	description string
-	nextNode *StoryNode
-	nextChoice *Choice
+	nextNode    *StoryNode
 }
 
 type StoryNode struct {
 	Text    string
-	choices *Choice
+	choices []*Choice
 }
 
 func (story *StoryNode) AddChoice(cmd, description string, nextNode *StoryNode) {
-	newChoice := &Choice{
-		cmd:         cmd,
-		description: description,
-		nextNode:    nextNode,
-		nextChoice:  nil,
-	}
-
-	if story.choices == nil {
-		story.choices = newChoice
-	} else {
-		currentChoice := story.choices
-		for currentChoice.nextChoice != nil {
-			currentChoice = currentChoice.nextChoice
-		}
-		currentChoice.nextChoice = newChoice
-	}
+	newChoice := &Choice{cmd, description, nextNode}
+	story.choices = append(story.choices, newChoice)
 }
 
 func (story StoryNode) Render(win *pixelgl.Window) {
@@ -50,11 +35,11 @@ func (story StoryNode) Render(win *pixelgl.Window) {
 	fmt.Fprintln(basicTxt, story.Text)
 	basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 1))
 
-	currentChoice := story.choices
-	for currentChoice != nil {
-		fmt.Fprintf(basicTxt, "%s : %s \n", currentChoice.cmd, currentChoice.description)
-		currentChoice = currentChoice.nextChoice
-		basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 1))
+	if story.choices != nil {
+		for _, c := range story.choices {
+			fmt.Fprintf(basicTxt, "%s : %s \n", c.cmd, c.description)
+			basicTxt.Draw(win, pixel.IM.Scaled(basicTxt.Orig, 1))
+		}
 	}
 }
 
@@ -62,15 +47,11 @@ func matchStrings(str1, str2 string) bool {
 	return strings.ToLower(str1) == strings.ToLower(str2)
 }
 func (story *StoryNode) ExecuteCMD(cmd string) *StoryNode {
-	basicTxt := text.New(pixel.V(10, 250), basicAtlas)
-	currentChoice := story.choices
-	for currentChoice != nil {
-		if matchStrings(currentChoice.cmd, cmd) {
-			return currentChoice.nextNode
+	for _, c := range story.choices {
+		if matchStrings(c.cmd, cmd) {
+			return c.nextNode
 		}
-		currentChoice = currentChoice.nextChoice
 	}
-	fmt.Fprintln(basicTxt,"Sorry, didn't understand that CMD please enter again!")
 	return story
 }
 
@@ -104,9 +85,10 @@ func (story *StoryNode) Play(win *pixelgl.Window) {
 }
 
 var (
-	Width = 480
+	Width  = 480
 	Height = 320
 )
+
 func PercentWidth(pcent int) int {
 	percent := (Width * pcent) / 100
 	return percent

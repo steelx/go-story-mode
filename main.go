@@ -18,28 +18,39 @@ func run() {
 	}
 
 	storyStart := storyNode.StoryNode{Text: `
-You enter a big cave.
-		⟿⟿
-			【 N 】
-		【 E 】     ⟿⟿
-			【 S 】
-You see three passages leading out.
-North leads into darkness, south has some up hills, east appears to have some foot trails..
+	You enter a big cave.
+	
+				【 N 】
+		【 E 】     
+				【 S 】
+	
+	You see three passages leading out.
+	  North leads into darkness, south has some up hills,
+		east appears to have some foot trails..
 	`}
 
-	darkRoom := storyNode.StoryNode{Text: `Its pitch black you cannot see a thing @_@`}
+	darkRoom := storyNode.StoryNode{Text: `
+	Its pitch dark you cannot see shit 
+	@_@
+	
+	`}
 	darkRoomLit := storyNode.StoryNode{Text: `
-	The dark room is not lit by your lantern. 
+	The dark room is now lit with your lantern. 
 				^_-
 	You can go back south or head out to North
 	`}
-	lion := storyNode.StoryNode{Text: `While stumbling around, you get eaten by Lion in the darkness -O-`}
+	lion := storyNode.StoryNode{Text: `
+	While stumbling around, you get eaten by Lion -O-
+	`}
 	trapRoom := storyNode.StoryNode{Text: `
 	You head to East where it seems well traveled.
 	It's a trap!!
 	You fall into a pit \m/
 	`}
-	treasureRoom := storyNode.StoryNode{Text: `You arrive at a room fill with gold treasures!! $_$`}
+	treasureRoom := storyNode.StoryNode{Text: `
+	You arrive at a room fill with gold treasures!!
+	$_$
+	`}
 
 	storyStart.AddChoice("N", "Go North", &darkRoom)
 	storyStart.AddChoice("S", "Go South", &darkRoom)
@@ -53,8 +64,6 @@ North leads into darkness, south has some up hills, east appears to have some fo
 
 	storyStart.Play(win)
 
-	//END
-	//storyStart.Render(win)
 	for !win.Closed() {
 		win.Update()
 	}
