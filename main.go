@@ -54,7 +54,7 @@ func run() {
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
-		Bounds: pixel.R(0, 0, 480, 320),
+		Bounds: pixel.R(0, 0, 640, 480),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
