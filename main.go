@@ -6,42 +6,43 @@ import (
 	"github.com/steelx/go-story-mode/storyNode"
 )
 
-func run() {
-	storyStart := storyNode.StoryNode{Text: `
-	You enter a big cave.
-	
-				【 N 】
-		【 E 】     
-				【 S 】
-	
-	You see three passages leading out.
-	  North leads into darkness, south has some up hills,
-		east appears to have some foot trails..
+var (
+	storyStart = storyNode.StoryNode{Text: `
+You enter a big cave.
+
+			[ N ]
+	[ E ]    
+			[ S ]
+
+You see three passages leading out.
+North leads into darkness, south has some up hills,
+east appears to have some foot trails..
 	`}
 
-	darkRoom := storyNode.StoryNode{Text: `
-	Its pitch dark you cannot see shit 
-	@_@
-	
+	darkRoom = storyNode.StoryNode{Text: `
+Its pitch dark you cannot see shit 
+@_@
 	`}
-	darkRoomLit := storyNode.StoryNode{Text: `
-	The dark room is now lit with your lantern. 
-				^_-
-	You can go back south or head out to North
+	darkRoomLit = storyNode.StoryNode{Text: `
+The dark room is now lit with your lantern. 
+			^_-
+You can go back south or head out to North
 	`}
-	lion := storyNode.StoryNode{Text: `
-	While stumbling around, you get eaten by Lion -O-
+	lion = storyNode.StoryNode{Text: `
+While stumbling around, you get eaten by Lion -O-
 	`}
-	trapRoom := storyNode.StoryNode{Text: `
-	You head to East where it seems well traveled.
-	It's a trap!!
-	You fall into a pit \m/
+	trapRoom = storyNode.StoryNode{Text: `
+You head to East where it seems well traveled.
+It's a trap!!
+You fall into a pit \m/
 	`}
-	treasureRoom := storyNode.StoryNode{Text: `
-	You arrive at a room fill with gold treasures!!
-	$_$
+	treasureRoom = storyNode.StoryNode{Text: `
+You arrive at a room fill with gold treasures!!
+$_$
 	`}
+)
 
+func init() {
 	storyStart.AddChoice("N", "Go North", &darkRoom)
 	storyStart.AddChoice("S", "Go South", &darkRoom)
 	storyStart.AddChoice("E", "Go East", &trapRoom)
@@ -51,7 +52,9 @@ func run() {
 
 	darkRoomLit.AddChoice("N", "Go North", &treasureRoom)
 	darkRoomLit.AddChoice("S", "Go South", &storyStart)
+}
 
+func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
 		Bounds: pixel.R(0, 0, 640, 480),
