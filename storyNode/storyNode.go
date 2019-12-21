@@ -50,7 +50,7 @@ func (story StoryNode) Render(win *pixelgl.Window) {
 func matchStrings(str1, str2 string) bool {
 	return strings.ToLower(str1) == strings.ToLower(str2)
 }
-func ExecuteCMD(story *StoryNode, cmd string) *StoryNode {
+func (story *StoryNode) ExecuteCMD(cmd string) *StoryNode {
 	for _, c := range story.choices {
 		if matchStrings(c.cmd, cmd) {
 			return c.nextNode
@@ -59,9 +59,9 @@ func ExecuteCMD(story *StoryNode, cmd string) *StoryNode {
 	return story
 }
 
-func Play(story *StoryNode, userInput string) *StoryNode {
+func (story *StoryNode) Play(userInput string) *StoryNode {
 	if len(story.choices) != 0 {
-		return ExecuteCMD(story, userInput)
+		return story.ExecuteCMD(userInput)
 	}
 	return story
 }

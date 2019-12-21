@@ -54,10 +54,10 @@ func init() {
 	storyStart.AddChoice("S", "Go South", &darkRoom)
 	storyStart.AddChoice("E", "Go East", &trapRoom)
 
-	darkRoom.AddChoice("S", "Go back South", &lion)
+	darkRoom.AddChoice("W", "Go back South", &lion)
 	darkRoom.AddChoice("O", "Turn on Lantern", &darkRoomLit)
 
-	darkRoomLit.AddChoice("N", "Go North", &treasureRoom)
+	darkRoomLit.AddChoice("E", "Go North", &treasureRoom)
 	darkRoomLit.AddChoice("S", "Go South", storyStart)
 }
 
@@ -72,12 +72,10 @@ func run() {
 		panic(err)
 	}
 
-	var userInput string
-
 	tick := time.Tick(frameRate)
 	for !win.Closed() {
 		win.Clear(colornames.Firebrick)
-		userInput = ""
+		var userInput string
 		if win.Pressed(pixelgl.KeyN) {
 			userInput = "n"
 		}
@@ -94,7 +92,7 @@ func run() {
 		select {
 		case <-tick:
 			storyStart.Render(win)
-			storyStart = storyNode.Play(storyStart, userInput)
+			storyStart = storyStart.Play(userInput)
 		}
 
 		if storyStart.IsEmpty() {
