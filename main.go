@@ -6,12 +6,14 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/steelx/go-story-mode/storyNode"
+	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
+	"time"
 )
 
 var (
 	basicAtlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
-	storyStart = storyNode.StoryNode{Text: `
+	storyStart = &storyNode.StoryNode{Text: `
 You enter a big cave.
 
 			[ N ]
@@ -44,6 +46,7 @@ You fall into a pit \m/
 You arrive at a room fill with gold treasures!!
 $_$
 	`}
+	frameRate = 33 * time.Millisecond
 )
 
 func init() {
@@ -55,7 +58,7 @@ func init() {
 	darkRoom.AddChoice("O", "Turn on Lantern", &darkRoomLit)
 
 	darkRoomLit.AddChoice("N", "Go North", &treasureRoom)
-	darkRoomLit.AddChoice("S", "Go South", &storyStart)
+	darkRoomLit.AddChoice("S", "Go South", storyStart)
 }
 
 func run() {
@@ -69,12 +72,36 @@ func run() {
 		panic(err)
 	}
 
-	storyStart.Play(win)
+	var userInput string
 
+	tick := time.Tick(frameRate)
 	for !win.Closed() {
-		endTxt := text.New(pixel.V(100, 100), basicAtlas)
-		fmt.Fprintln(endTxt, "THE END.")
-		endTxt.Draw(win, pixel.IM.Scaled(endTxt.Bounds().Center(), 3))
+		win.Clear(colornames.Firebrick)
+		userInput = ""
+		if win.Pressed(pixelgl.KeyN) {
+			userInput = "n"
+		}
+		if win.Pressed(pixelgl.KeyS) {
+			userInput = "s"
+		}
+		if win.Pressed(pixelgl.KeyO) {
+			userInput = "o"
+		}
+		if win.Pressed(pixelgl.KeyE) {
+			userInput = "e"
+		}
+
+		select {
+		case <-tick:
+			storyStart.Render(win)
+			storyStart = storyNode.Play(storyStart, userInput)
+		}
+
+		if storyStart.IsEmpty() {
+			endTxt := text.New(pixel.V(100, 100), basicAtlas)
+			fmt.Fprintln(endTxt, "THE END.")
+			endTxt.Draw(win, pixel.IM.Scaled(endTxt.Bounds().Center(), 3))
+		}
 		win.Update()
 	}
 }

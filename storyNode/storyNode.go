@@ -5,7 +5,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 	"strings"
 )
@@ -30,6 +29,10 @@ func (story *StoryNode) AddChoice(cmd, description string, nextNode *StoryNode) 
 	story.choices = append(story.choices, newChoice)
 }
 
+func (story StoryNode) IsEmpty() bool {
+	return len(story.choices) == 0
+}
+
 func (story StoryNode) Render(win *pixelgl.Window) {
 	basicTxt := text.New(pixel.V(50, 250), basicAtlas)
 	fmt.Fprintln(basicTxt, story.Text)
@@ -47,7 +50,7 @@ func (story StoryNode) Render(win *pixelgl.Window) {
 func matchStrings(str1, str2 string) bool {
 	return strings.ToLower(str1) == strings.ToLower(str2)
 }
-func (story *StoryNode) ExecuteCMD(cmd string) *StoryNode {
+func ExecuteCMD(story *StoryNode, cmd string) *StoryNode {
 	for _, c := range story.choices {
 		if matchStrings(c.cmd, cmd) {
 			return c.nextNode
@@ -56,26 +59,9 @@ func (story *StoryNode) ExecuteCMD(cmd string) *StoryNode {
 	return story
 }
 
-func (story *StoryNode) Play(win *pixelgl.Window) {
-	win.Clear(colornames.Firebrick)
-
-	story.Render(win)
-	var userInput string
-	if win.Pressed(pixelgl.KeyN) {
-		userInput = "n"
-	}
-	if win.Pressed(pixelgl.KeyS) {
-		userInput = "s"
-	}
-	if win.Pressed(pixelgl.KeyO) {
-		userInput = "o"
-	}
-	if win.Pressed(pixelgl.KeyE) {
-		userInput = "e"
-	}
-
-	win.Update()
+func Play(story *StoryNode, userInput string) *StoryNode {
 	if len(story.choices) != 0 {
-		story.ExecuteCMD(userInput).Play(win)
+		return ExecuteCMD(story, userInput)
 	}
+	return story
 }
